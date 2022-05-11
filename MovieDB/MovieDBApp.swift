@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 @main
 struct MovieDBApp: App {
@@ -14,9 +15,25 @@ struct MovieDBApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
+    private var subscriptions: Set<AnyCancellable> = []
+    
     init() {
         print("app init")
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
+        let p = MovieDBAPI.shard.fetchPopularTVShows()
+        
+        print(p)
+        
+//        p.store(in: &subscriptions)
+        
+        p.sink { print($0)
+        } receiveValue: { print($0)
+            
+        }
+        .store(in: &subscriptions)
+
+        
     }
     
     var body: some Scene {
